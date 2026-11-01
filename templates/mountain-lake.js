@@ -1,0 +1,20 @@
+// The classic: sky, two mountain ranges, mist, a lake that mirrors them, and happy little trees.
+seed(4821);
+const horizon = 590;
+gradient(0, horizon + 20, [P.prussianBlue, '#5f88b5', '#f4efdf']);
+cloud(1050, 170, 320);
+cloud(330, 250, 220);
+mountains(horizon, { peaks: 4, height: 220, color: '#4b5068', haze: 0.45 });
+mist(horizon, 140);
+mountains(horizon, { peaks: 2, height: 360, x0: 650, x1: 1150 });
+mist(horizon, 80);
+treeLine(horizon);
+lake(horizon);
+land([[0, 640], [160, 690], [380, 800], [560, 1000], [0, 1000]]);
+land([[1500, 720], [1350, 790], [1180, 1000], [1500, 1000]]);
+cabin(250, 760, 150);
+bush(470, 930, 60);
+bush(1250, 940, 45);
+evergreen(110, 985, 560);
+evergreen(1400, 975, 470);
+sign('No. 4821');

@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Happy Little Pixels</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.css">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app">
+  <header class="bar">
+    <p class="mark">Happy Little Pixels</p>
+    <div class="modes" role="tablist" aria-label="How to paint">
+      <button role="tab" id="tabHand" aria-selected="true" type="button">Paint by hand</button>
+      <button role="tab" id="tabCode" aria-selected="false" type="button">Paint with code</button>
+    </div>
+    <span class="spacer"></span>
+    <button id="undoBtn" type="button" disabled title="Undo (⌘Z)">Undo</button>
+    <button id="redoBtn" type="button" disabled title="Redo (⇧⌘Z)">Redo</button>
+    <button id="clearBtn" type="button">Fresh canvas</button>
+    <button id="saveBtn" type="button" class="solid">Save PNG</button>
+    <span class="rec">
+      <select id="recFormat" aria-label="Video shape" title="Video shape">
+        <option value="canvas">3:2 canvas</option>
+        <option value="square">1:1 square</option>
+        <option value="vertical">9:16 reel</option>
+      </select>
+      <button id="recBtn" type="button" title="Record the canvas as a video. In code mode it runs your code and stops when the painting is done.">● Record</button>
+    </span>
+  </header>
+
+  <main class="work">
+    <section class="stage">
+      <div class="canvas-wrap">
+        <canvas id="cv" width="1500" height="1000" aria-label="Painting canvas"></canvas>
+        <p class="hint" id="hint"></p>
+      </div>
+      <div class="status">
+        <span id="coords">x –, y –</span>
+        <div class="meter" aria-hidden="true"><i id="meter"></i></div>
+        <span id="stats">0 strokes</span>
+      </div>
+    </section>
+
+    <aside class="tools">
+      <div id="handPanel">
+        <section class="group">
+          <h2>Brush</h2>
+          <div class="brushes" id="brushes"></div>
+        </section>
+        <section class="group">
+          <h2><label for="size">Size</label><output id="sizeOut">64 px</output></h2>
+          <input type="range" id="size" min="2" max="200" value="64">
+          <h2><label for="wet">Wet canvas</label><output id="wetOut">35%</output></h2>
+          <input type="range" id="wet" min="0" max="100" value="35">
+        </section>
+        <section class="group">
+          <div class="loaded">
+            <span class="sw" id="loadedSw"></span>
+            <div><strong id="loadedName">Prussian Blue</strong><small id="loadedHex"></small></div>
+          </div>
+          <ul class="paints" id="paints"></ul>
+          <div class="mixrow">
+            <button id="mixBtn" type="button" aria-pressed="false">Mix next paint in</button>
+            <span>or Shift-click a paint</span>
+          </div>
+        </section>
+      </div>
+
+      <div id="codePanel" class="code-panel" hidden>
+        <nav class="subtabs" role="tablist" aria-label="Code tools">
+          <button role="tab" type="button" data-pane="paneCode" aria-selected="true">Code</button>
+          <button role="tab" type="button" data-pane="paneLib" aria-selected="false">Library</button>
+          <button role="tab" type="button" data-pane="paneSketch" aria-selected="false">Sketches</button>
+        </nav>
+
+        <div id="paneCode" class="pane code-pane">
+          <div class="row">
+            <label for="preset">Start from</label>
+            <select id="preset"></select>
+          </div>
+          <div class="editor-wrap"><textarea id="editor" spellcheck="false" aria-label="Painting code"></textarea></div>
+          <div class="runrow">
+            <button class="go" id="runBtn" type="button">Run</button>
+            <button id="stopBtn" type="button" disabled>Stop</button>
+            <button id="rushBtn" type="button" disabled>Finish now</button>
+            <label class="speed" for="speed">Speed <input type="range" id="speed" min="0" max="4" value="2"></label>
+          </div>
+          <div class="row small">
+            <label class="check"><input type="checkbox" id="keepCanvas"> Paint over what's there</label>
+            <label class="check"><input type="checkbox" id="clickCoords" checked> Click canvas to insert x, y</label>
+          </div>
+          <p class="err" id="err" role="alert"></p>
+          <p class="keys">⌘/Ctrl + Enter runs · ⌘/Ctrl + S saves a sketch · Ctrl + Space completes a name</p>
+        </div>
+
+        <div id="paneLib" class="pane lib-pane" hidden>
+          <input type="search" id="libSearch" placeholder="Search helpers: tree, water, moon…" aria-label="Search helpers">
+          <div id="lib"></div>
+        </div>
+
+        <div id="paneSketch" class="pane" hidden>
+          <form class="row" id="sketchForm">
+            <input id="sketchName" placeholder="Name this sketch" aria-label="Sketch name">
+            <button type="submit">Save current code</button>
+          </form>
+          <ul class="sketches" id="sketches"></ul>
+          <p class="empty" id="noSketches">Sketches you save are kept in this browser.</p>
+        </div>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+<script type="module" src="src/main.js"></script>
+</body>
+</html>
