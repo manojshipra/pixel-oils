@@ -2,6 +2,34 @@
 
 An oil-painting studio that runs in the browser. Paint by hand with simulated bristle brushes, or write JavaScript that paints for you and watch it happen stroke by stroke.
 
+**Try it: [manojshipra.github.io/pixel-oils](https://manojshipra.github.io/pixel-oils/)**
+
+<p align="center"><img src="docs/timelapse.gif" alt="A painting of a red tree, Mount Fuji and breaking waves building up stroke by stroke" width="720"></p>
+
+## Gallery
+
+Every one of these is a few lines of code, painted with the same bristle brush. They're all in the app under *Start from*, and in [`templates/`](templates/).
+
+| | | |
+|:-:|:-:|:-:|
+| <img src="docs/windswept-sakura.jpg" alt="Windswept sakura"><br>Windswept sakura | <img src="docs/pine-and-gold-moon.jpg" alt="Pine and gold moon"><br>Pine and gold moon | <img src="docs/red-tree-and-fuji.jpg" alt="Red tree and Fuji"><br>Red tree and Fuji |
+| <img src="docs/black-hole.jpg" alt="Black hole"><br>Black hole (ray traced) | <img src="docs/mountain-lake.jpg" alt="Mountain lake"><br>Mountain lake | <img src="docs/northern-lights.jpg" alt="Northern lights"><br>Northern lights |
+| <img src="docs/seascape.jpg" alt="Seascape"><br>Seascape | <img src="docs/deep-space.jpg" alt="Deep space"><br>Deep space | <img src="docs/autumn.jpg" alt="Autumn"><br>Autumn |
+
+This is all it takes for the pine:
+
+```js
+seed(17);
+paper();
+orb(760, 370, 255, { color: '#d2a03a' });
+crag([[520, 1010], [575, 925], [660, 880], [780, 868], [890, 900], [990, 980], [1010, 1010]]);
+limb([[790, 900], [720, 810], [690, 710], [765, 610], [745, 515], [700, 440], [740, 355], [775, 285]], 70);
+const right = limb([[748, 470], [860, 455], [975, 500], [1060, 560]], 22);
+twigs(right, 10, { angle: [0.6, 1.6], length: 45, width: 3 });
+pinePad(985, 492, 115, 34);
+// …a few more limbs and pads
+```
+
 ## Run it
 
 It's plain ES modules with no build step, but browsers won't load modules from `file://`, so serve the folder:
